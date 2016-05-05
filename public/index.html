@@ -3,15 +3,16 @@
 <head>
     <meta charset="utf-8">
     <title>jsonmander</title>
+    <link rel="stylesheet" type="text/css" href="../css/jsontree.css">
     <link rel="stylesheet" type="text/css" href="../css/jsonmander.css">
 </head>
 <body>
+    <div id="jsontree"></div>
     <div id="jsonmander"></div>
     <script type="text/javascript" src="../src/jsontree.js"></script>
     <script type="text/javascript" src="../src/jsonmander.js"></script>
     <script>
-        document.getElementById('jsonmander').appendChild(jsonmander(
-
+        var testJson = 
 {
   "apiVersion": "2.0",
   "data": {
@@ -69,7 +70,16 @@
     ]
   }
 }
-        ));
+        document.getElementById('jsontree').innerHTML = create(testJson);
+        /*
+        var ulel = document.createElement('ul');
+        ulel.appendChild(describe(null));
+        ulel.appendChild(describe('orly', 3, [5]));
+        ulel.appendChild(describe(7, 4));
+        ulel.appendChild(describe(true, 4));
+        document.getElementById('jsonmander').appendChild(ulel);
+        */
+        document.getElementById('jsonmander').appendChild(jsonmander(null));
     </script>
 </body>
 </html>

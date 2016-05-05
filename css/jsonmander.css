@@ -1,1 +1,24 @@
 /* jsonmander style */
+
+ul._jsonmander {
+    font-family: droid sans mono,consolas,monospace,courier new,courier,sans-serif;
+    font-size: 12pt;
+    font-weight: 400;
+}
+
+._jsonmander_row {
+    white-space: pre-wrap;
+    list-style: none;
+}
+
+ul._jsonmander > li:nth-of-type(odd) { 
+    background-color: #eeeeee;
+}
+
+div._json_obj:nth-of-type(odd) {
+    background-color: #eeeeee;
+}
+
+._json_key {
+    float: left;
+}

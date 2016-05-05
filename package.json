@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "json tree view with search box",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jshint src/jsonmander.js"
   },
   "keywords": [
     "json",
@@ -14,5 +14,8 @@
     "search"
   ],
   "author": "sangwook-kim",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jshint": "^2.9.2"
+  }
 }
