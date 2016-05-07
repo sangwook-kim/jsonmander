@@ -15,36 +15,49 @@
             });
         },
         jsonmander = function(json) {
+            depth = 0;
+            var rows = describe(json);
+            rows = parseRows(rows);
+
             rootEl.className = '_jsonmander';
-    
-            rootEl.innerHTML = describe(json);
+            rootEl.innerHTML = rows;
 
             return rootEl;
         },
-        describe = function(val, depth, index) {
+        parseRows = function(rows) {
+            var parsedRows = [];
+            rows = rows.split('&');
+            for(var i = 0, l = rows.length; i < l; i++) {
+                if(rows[i] !== '') {
+                    parsedRows.push('<li class="_jsonmander_row">' + rows[i] + '</li>');
+                }
+            }
+
+            return parsedRows.join('');
+        },
+        describe = function(val, index) {
             if(val !== null) {
                 var type = typeof val;
                 switch (type) {
                   case 'boolean':
-                    return describePrimitive(val, '_json_bool', depth, index);
+                    return describePrimitive(val, '_json_bool', index);
                   case 'number':
-                    return describePrimitive(val, '_json_number', depth, index);
+                    return describePrimitive(val, '_json_number', index);
                   case 'string':
-                    return describePrimitive(escapeString(val), '_json_string', depth, index);
+                    return describePrimitive( '"' + escapeString(val) + '"', '_json_string', index);
                   default:
                     if (val instanceof Array) {
-                      return describeArray(val, depth, indent, index);
+                      return describeArray(val, index);
                     } else {
-                      return describeObject(val, depth, indent, index);
+                      return describeObject(val, index);
                     }
                 }
             } else {
-                return describePrimitive(val, '_json_null', depth, index);
+                return describePrimitive(val, '_json_null', index);
             }
         },
-        describePrimitive = function(val, className, depth, index) {
-            var depth = depth ? depth: 0,
-                content;
+        describePrimitive = function(val, className, index) {
+            var content;
 
             if(typeof index !== 'undefined') {
                 content = '<span class="_json_index">' +
@@ -55,34 +68,76 @@
                           '</span>';
             } else {
                 content = '<span class="_json_val ' + className + '">' +
-                              pushRight(depth) + val +
+                              //pushRight(depth) + val +
+                              val +
                           '</span>';
             }
 
-            return '<li class="_jsonmander_row">' + content + '</li>';
- 
+            return content + '&';
         },
-        describeObject = function(val, depth, index, indent) {
+        describeObject = function(val, index) {
             //TODO: init fold flag?
-            var depth = depth ? depth: 0,
-                content = Object.keys(val).map(function(key) {
-                              return '<div class="_json_obj"><span class="_json_key">' +
-                                     pushRight(depth + 1) + '"' + key + '": ' +
+            depth++;
+
+            var content = Object.keys(val).map(function(key) {
+                              return '<span class="_json_key">' +
+                                     pushRight(depth) + '"' + key + '": ' +
                                      '</span>' + describe(val[key]);
-                          }).join('</div>');
-    /*
-    var body = [
-      _openBracket('{', indent ? depth : 0, id),
-      _span(content, {id: id}),
-      _closeBracket('}', depth)
-    ].join('\n');
-    return _span(body, {})
-    */
+                          }).join('');
+
+            if(typeof index !== 'undefined') {
+                content = '<span class="_json_index">' + '[' + index + ']' + '</span>' +
+                          '<span class="_jsonmander_brace"> {</span>' +
+                          '<span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          content;
+            } else {
+                content = '<span class="_jsonmander_brace">' +
+                          '{</span><span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          content;
+            }
+
+            depth--;
+
+            content = content + 
+                      '<span class="_jsonmander_brace">'  + pushRight(depth) +
+                      '}</span>&';
+
+            return content;
+        },
+        describeArray = function(val, index) {
+            //TODO: init fold flag?
+            depth++;
+            var content = '';
+
+            for(var i = 0, l = val.length; i < l; ++i) {
+                content += '<span class="_json_index">' + 
+                           pushRight(depth) + '[' + i + ']: ' +
+                           '</span>' + describe(val[i]);
+            }
+
+            if(typeof index !== 'undefined') {
+                content = '<span class="_json_index">' + '[' + index + ']' + '</span>' +
+                          '<span class="_jsonmander_brace"> [</span>' +
+                          '<span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          content;
+            } else {
+                content = '<span class="_jsonmander_brace">' +
+                          '[</span><span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          content;
+            }
+
+            depth--;
+
+            content = content + 
+                      '<span class="_jsonmander_brace">'  + pushRight(depth) +
+                      ']</span>&';
+
             return content;
         },
         pushRight = function(depth) {
             return Array((depth * 2) + 1).join(' ');
-        };
+        },
+        depth;
 
 //    global.jsonmander = jsonmander;
 //})(this);
