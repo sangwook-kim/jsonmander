@@ -103,11 +103,11 @@
             if(typeof index !== 'undefined') {
                 content = '<span class="_json_index">' + '[' + index + ']' + '</span>' +
                           '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '"> {</span>'  +
-                          '<span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
                           content;
             } else {
                 content = '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '">'  +
-                          '{</span><span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
                           content;
             }
 
@@ -132,19 +132,19 @@
 
             if(typeof index !== 'undefined') {
                 content = '<span class="_json_index">' + '[' + index + ']' + '</span>' +
-                          '<span class="_jsonmander_brace" data-block-id="open_' + arrayID + '"> [</span>' +
-                          '<span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                          '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '"> [</span>' +
+                          '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
                           content;
             } else {
-                content = '<span class="_jsonmander_brace" data-block-id="open_' + arrayID + '">' +
-                          '[</span><span class="_jsonmander_fold"><a href="#">+</a></span>&' +
+                content = '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '">' +
+                          '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
                           content;
             }
 
             depth--;
 
             content = content + 
-                      '<span class="_jsonmander_brace" data-block-id="close_' + arrayID + '">'  +
+                      '<span class="_jsonmander_bracket" data-block-id="close_' + arrayID + '">'  +
                       pushRight(depth) + ']</span>&';
 
             return content;
@@ -155,22 +155,62 @@
         toggleFold = function(e) {
             if(e.target && e.target.nodeName === 'A') {
                 e.preventDefault();
-                //TODO: toggle
-                var openLi = e.target.parentNode.parentNode,
-                    closeID = openLi.id.replace('open', 'close'),
-                    bankEl = document.createElement('ul'),
-                    nextLi = openLi.nextSibling;
 
-                bankEl.className = '_jsonmander_bank ' + closeID;
-                while(nextLi.id !== closeID) {
-                    var oldLi = nextLi;
-                    nextLi = nextLi.nextSibling;
-                    oldLi.remove();
-                    bankEl.appendChild(oldLi);
+                if(e.target.className.indexOf('_jsonmander_fold') > -1) {
+                    fold(e.target.parentNode.parentNode);
+                } else {
+                    unfold(e.target.parentNode.parentNode);
                 }
-                rootEl.appendChild(bankEl);
-                debugger;
             }
+        },
+        fold = function(openLI) {
+            var closeID = openLI.id.replace('open', 'close'),
+                bankEl = document.createElement('ul'),
+                nextLI = openLI.nextSibling,
+                closeBraceSpan = document.createElement('span'),
+                foldBtn = openLI.getElementsByTagName('a')[0];
+
+            bankEl.className = '_jsonmander_bank ' + closeID;
+            while (true) {
+                var oldLI = nextLI;
+                nextLI = nextLI.nextSibling;
+                oldLI.remove();
+                bankEl.appendChild(oldLI);
+                if(oldLI.id === closeID) break;
+            }
+            rootEl.appendChild(bankEl);
+
+            if(openLI.getElementsByClassName('_jsonmander_brace').length > 0) {
+                closeBraceSpan.className = '_jsonmander_brace';
+                closeBraceSpan.innerText = '}';
+            } else {
+                closeBraceSpan.className = '_jsonmander_bracket';
+                closeBraceSpan.innerText = ']';
+            }
+
+            foldBtn.className = '_jsonmander_unfold';
+            foldBtn.innerText = '+';
+
+
+            openLI.appendChild(closeBraceSpan);
+        },
+        unfold = function(openLI) {
+            var closeID = openLI.id.replace('open', 'close'),
+                nextLI = openLI.nextSibling,
+                bankEl = rootEl.getElementsByClassName('_jsonmander_bank ' + closeID)[0],
+                foldedLIs = bankEl.childNodes,
+                foldBtn = openLI.getElementsByTagName('a')[0];
+
+            for(var i = 0, l = foldedLIs.length; i < l; ++i) {
+                rootEl.insertBefore(foldedLIs[0], nextLI);
+            }
+
+            bankEl.remove();
+
+            openLI.lastChild.remove();
+
+            foldBtn.className = '_jsonmander_fold';
+            foldBtn.innerText = '-';
         },
         depth;
 
