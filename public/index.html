@@ -71,15 +71,7 @@
   }
 }
         document.getElementById('jsontree').innerHTML = create(testJson);
-        /*
-        var ulel = document.createElement('ul');
-        ulel.appendChild(describe(null));
-        ulel.appendChild(describe('orly', 3, [5]));
-        ulel.appendChild(describe(7, 4));
-        ulel.appendChild(describe(true, 4));
-        document.getElementById('jsonmander').appendChild(ulel);
-        */
-        document.getElementById('jsonmander').appendChild(jsonmander(null));
+        document.getElementById('jsonmander').appendChild(jsonmander(testJson));
     </script>
 </body>
 </html>
