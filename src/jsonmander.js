@@ -90,7 +90,6 @@
             return content + '&';
         },
         describeObject = function(val, index) {
-            //TODO: init fold flag?
             depth++;
 
             var content = Object.keys(val).map(function(key) {
@@ -120,7 +119,6 @@
             return content;
         },
         describeArray = function(val, index) {
-            //TODO: init fold flag?
             depth++;
             var content = '', arrayID = instance + '_' + _id++;
 

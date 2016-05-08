@@ -19,6 +19,10 @@ ul._jsonmander {
     display: none;
 }
 
+._jsonmander_box {
+    float: right;
+}
+
 /*
 div._json_obj:nth-of-type(odd) {
     background-color: #eeeeee;
