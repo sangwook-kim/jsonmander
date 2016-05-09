@@ -23,6 +23,11 @@ ul._jsonmander {
     float: right;
 }
 
+._jsonmander_hilite {
+    background-color: #FFFF00;
+    font-weight: 900;
+}
+
 /*
 div._json_obj:nth-of-type(odd) {
     background-color: #eeeeee;

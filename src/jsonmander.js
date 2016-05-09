@@ -3,6 +3,7 @@
     //TODO: search box - fixed position?
     //TODO: multiple instance jsonRoot;
     var jsonRoot = document.createElement('ul'),
+        searchList = document.createElement('ul'),
         searchBox = document.createElement('input'),
         instance = 0, _id = 0,
         roots = [],
@@ -20,7 +21,7 @@
                 return escapeMap[c];
             });
         },
-        jsonmander = function(rootEl, json) {
+        jsonmander = function(rootEl, json, doSearch) {
             roots.push[rootEl];
             depth = 0;
             originalJson = json;
@@ -31,6 +32,10 @@
             jsonRoot.innerHTML = rows;
             jsonRoot.id = 'jsonmander_' + instance;
 
+            searchList.className = '_jsonmander';
+            searchList.innerHTML = rows;
+            searchList.id = 'jsonmander_' + instance;
+
             searchBox.type = 'text';
             searchBox.className = '_jsonmander_box';
             searchBox.id = 'jsonmander_box_' + instance;
@@ -39,8 +44,14 @@
             originalTree = jsonRoot;
             jsonRoot.addEventListener('click', toggleFold);
 
-            rootEl.appendChild(searchBox);
+            if(doSearch) {
+                rootEl.appendChild(searchBox);
+            }
             rootEl.appendChild(jsonRoot);
+            rootEl.appendChild(searchList);
+
+            clearSearch();
+
             ++instance;
         },
         parseRows = function(rows) {
@@ -227,13 +238,37 @@
             var query = e.target.value.trim();
             if(query[0] === '[' || query[0] === '.') {
                 browse(query);
+            } else if(query.length === 0) {
+                clearSearch();
             } else {
                 grep(query);
             }
         },
+        clearSearch = function() {
+            jsonRoot.style.display = 'block';
+            searchList.innerHTML = '';
+            searchList.style.display = 'none';
+            searchBox.value = '';
+        },
         browse = function(obj) {
+            debugger;
+            console.log(originalJson);
         },
         grep = function(q) {
+            jsonRoot.style.display = 'none';
+            searchList.innerHTML = '';
+            searchList.style.display = 'block';
+
+            var originalList = originalTree.childNodes;
+            for(var i = 0, l = originalList.length; i < l; ++i) {
+                if(originalList[i].textContent.indexOf(q) > -1) {
+                    var foundLI = originalList[i].cloneNode(true);
+                    for(var j = 0, len = foundLI.childNodes.length; j < len; ++j) {
+                        foundLI.childNodes[j].innerHTML = foundLI.childNodes[j].innerHTML.replace(q, '<span class="_jsonmander_hilite">' + q + '</span>');
+                    }
+                    searchList.appendChild(foundLI);
+                }
+            }
         },
         depth;
 
