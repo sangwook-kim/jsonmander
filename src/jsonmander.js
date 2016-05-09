@@ -187,7 +187,9 @@
                 bankEl = document.createElement('ul'),
                 nextLI = openLI.nextSibling,
                 closeBraceSpan = document.createElement('span'),
-                foldBtn = openLI.getElementsByTagName('a')[0];
+                foldBtn = openLI.getElementsByTagName('a')[0],
+                instanceID = openLI.id.split('jsonmander_open_')[1].split('_')[0],
+                root = document.getElementById('jsonmander_' + instanceID);
 
             bankEl.className = '_jsonmander_bank ' + closeID;
             while (true) {
@@ -197,7 +199,7 @@
                 bankEl.appendChild(oldLI);
                 if(oldLI.id === closeID) break;
             }
-            jsonRoot.appendChild(bankEl);
+            root.appendChild(bankEl);
 
             if(openLI.getElementsByClassName('_jsonmander_brace').length > 0) {
                 closeBraceSpan.className = '_jsonmander_brace';
