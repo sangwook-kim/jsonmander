@@ -106,3 +106,6 @@ jspm_packages
 
 # jsctags
 tags
+
+# project
+dist

@@ -22,7 +22,7 @@
             });
         },
         jsonmander = function(rootEl, json, doSearch) {
-            roots.push[rootEl];
+            roots.push(rootEl);
             depth = 0;
             originalJson = json;
             var rows = describe(json);

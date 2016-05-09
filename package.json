@@ -3,7 +3,14 @@
   "version": "1.0.0",
   "description": "json tree view with search box",
   "scripts": {
-    "test": "jshint src/jsonmander.js"
+    "test": "jshint src/jsonmander.js",
+    "prebuild": "npm run test && npm run clean",
+    "build": "uglifyjs src/jsonmander.js > dist/jsonmander.min.js",
+    "clean": "rimraf dist && mkdirp dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sangwookkim/jsonmander/"
   },
   "keywords": [
     "json",
@@ -15,7 +22,10 @@
   ],
   "author": "sangwook-kim",
   "license": "MIT",
-  "devDependencies": {
-    "jshint": "^2.9.2"
+  "dependencies": {
+    "jshint": "^2.9.2",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.5.2",
+    "uglifyjs": "^2.4.10"
   }
 }
