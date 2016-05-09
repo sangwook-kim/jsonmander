@@ -4,17 +4,26 @@ ul._jsonmander {
     font-family: droid sans mono,consolas,monospace,courier new,courier,sans-serif;
     font-size: 12pt;
     font-weight: 400;
+    list-style: none;
 }
 
 ._jsonmander_row {
     white-space: pre-wrap;
-    list-style: none;
 }
 
-ul._jsonmander > li:nth-of-type(odd) { 
+._jsonmander_row:nth-child(odd) {
     background-color: #eeeeee;
 }
 
+._jsonmander_bank {
+    display: none;
+}
+
+._jsonmander_box {
+    float: right;
+}
+
+/*
 div._json_obj:nth-of-type(odd) {
     background-color: #eeeeee;
 }
@@ -22,3 +31,4 @@ div._json_obj:nth-of-type(odd) {
 ._json_key {
     float: left;
 }
+*/
