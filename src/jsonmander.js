@@ -1,9 +1,11 @@
-//TODO: text search - rootEl.childNodes[i].textContent
+//TODO: text search - jsonRoot.childNodes[i].textContent
 (function(global) {
     //TODO: search box - fixed position?
-    //TODO: multiple instance rootEl;
-    var rootEl = document.createElement('ul'),
+    //TODO: multiple instance jsonRoot;
+    var jsonRoot = document.createElement('ul'),
+        searchBox = document.createElement('input'),
         instance = 0, _id = 0,
+        roots = [],
         originalJson, originalTree,
         escapeMap = {
             '&': '&amp;',
@@ -18,20 +20,28 @@
                 return escapeMap[c];
             });
         },
-        jsonmander = function(json) {
-            ++instance;
+        jsonmander = function(rootEl, json) {
+            roots.push[rootEl];
             depth = 0;
             originalJson = json;
             var rows = describe(json);
             rows = parseRows(rows);
 
-            rootEl.className = '_jsonmander';
-            rootEl.innerHTML = rows;
+            jsonRoot.className = '_jsonmander';
+            jsonRoot.innerHTML = rows;
+            jsonRoot.id = 'jsonmander_' + instance;
 
-            originalTree = rootEl;
-            rootEl.addEventListener('click', toggleFold);
+            searchBox.type = 'text';
+            searchBox.className = '_jsonmander_box';
+            searchBox.id = 'jsonmander_box_' + instance;
+            searchBox.addEventListener('keyup', searchJSON);
 
-            return rootEl;
+            originalTree = jsonRoot;
+            jsonRoot.addEventListener('click', toggleFold);
+
+            rootEl.appendChild(searchBox);
+            rootEl.appendChild(jsonRoot);
+            ++instance;
         },
         parseRows = function(rows) {
             var parsedRows = [];
@@ -176,7 +186,7 @@
                 bankEl.appendChild(oldLI);
                 if(oldLI.id === closeID) break;
             }
-            rootEl.appendChild(bankEl);
+            jsonRoot.appendChild(bankEl);
 
             if(openLI.getElementsByClassName('_jsonmander_brace').length > 0) {
                 closeBraceSpan.className = '_jsonmander_brace';
@@ -195,12 +205,12 @@
         unfold = function(openLI) {
             var closeID = openLI.id.replace('open', 'close'),
                 nextLI = openLI.nextSibling,
-                bankEl = rootEl.getElementsByClassName('_jsonmander_bank ' + closeID)[0],
+                bankEl = jsonRoot.getElementsByClassName('_jsonmander_bank ' + closeID)[0],
                 foldedLIs = bankEl.childNodes,
                 foldBtn = openLI.getElementsByTagName('a')[0];
 
             for(var i = 0, l = foldedLIs.length; i < l; ++i) {
-                rootEl.insertBefore(foldedLIs[0], nextLI);
+                jsonRoot.insertBefore(foldedLIs[0], nextLI);
             }
 
             bankEl.remove();
@@ -209,6 +219,21 @@
 
             foldBtn.className = '_jsonmander_fold';
             foldBtn.innerText = '-';
+        },
+        searchJSON = function(e) {
+            if(e.keyCode !== 13) {
+                return;
+            }
+            var query = e.target.value.trim();
+            if(query[0] === '[' || query[0] === '.') {
+                browse(query);
+            } else {
+                grep(query);
+            }
+        },
+        browse = function(obj) {
+        },
+        grep = function(q) {
         },
         depth;
 
