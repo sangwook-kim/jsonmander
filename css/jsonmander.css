@@ -28,12 +28,11 @@ ul._jsonmander {
     font-weight: 900;
 }
 
-/*
-div._json_obj:nth-of-type(odd) {
-    background-color: #eeeeee;
+._jsonmander_error {
+    white-space: pre-wrap;
+    background-color: #EE0000;
 }
 
-._json_key {
-    float: left;
+ul._jsonmander_search_list a {
+    display: none;
 }
-*/

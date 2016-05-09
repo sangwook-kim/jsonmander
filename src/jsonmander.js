@@ -32,8 +32,8 @@
             jsonRoot.innerHTML = rows;
             jsonRoot.id = 'jsonmander_' + instance;
 
-            searchList.className = '_jsonmander';
-            searchList.innerHTML = rows;
+            searchList.className = '_jsonmander _jsonmander_search_list';
+            searchList.innerHTML = '';
             searchList.id = 'jsonmander_' + instance;
 
             searchBox.type = 'text';
@@ -250,9 +250,34 @@
             searchList.style.display = 'none';
             searchBox.value = '';
         },
-        browse = function(obj) {
-            debugger;
-            console.log(originalJson);
+        browse = function(objIdx) {
+            jsonRoot.style.display = 'none';
+            searchList.innerHTML = '';
+            searchList.style.display = 'block';
+
+            var idxs = objIdx.split(/[\[\.\]]+/),
+                newObj = originalJson;
+            
+            try {
+                for(var i = 0, l = idxs.length; i < l; ++i) {
+                    if(idxs[i] !== '') {
+                        var numIdx = parseInt(idxs[i], 10);
+                        if(numIdx + '' === idxs[i]) {
+                            newObj = newObj[numIdx];
+                        } else {
+                            newObj = newObj[idxs[i]];
+                        }
+                    }
+                }
+
+                var rows = describe(newObj);
+                rows = parseRows(rows);
+
+                searchList.innerHTML = rows;
+            } catch(e) {
+                showNoResult();
+            }
+
         },
         grep = function(q) {
             jsonRoot.style.display = 'none';
@@ -269,6 +294,15 @@
                     searchList.appendChild(foundLI);
                 }
             }
+
+            if(searchList.childNodes.length === 0) {
+                showNoResult();
+            }
+        },
+        showNoResult = function() {
+            jsonRoot.style.display = 'none';
+            searchList.innerHTML = '<li class="_jsonmander_error">  NO RESULT TO SHOW</li>';
+            searchList.style.display = 'block';
         },
         depth;
 
