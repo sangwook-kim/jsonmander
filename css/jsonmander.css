@@ -36,3 +36,24 @@ ul._jsonmander {
 ul._jsonmander_search_list a {
     display: none;
 }
+
+._json_val._json_bool {
+    color: #f5871f;
+}
+
+._json_val._json_null {
+    color: #f5871f;
+}
+
+._json_val._json_number {
+    color: #8959a8;
+}
+
+._json_val._json_string {
+    color: #718c00;
+}
+
+a._jsonmander_fold:link, a._jsonmander_fold:visited, a._jsonmander_fold:hover, a._jsonmander_fold:active, a._jsonmander_unfold:link, a._jsonmander_unfold:visited, a._jsonmander_unfold:hover, a._jsonmander_unfold:active {
+    color: #c82829;
+    text-decoration: none;
+}

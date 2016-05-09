@@ -1,13 +1,15 @@
-//TODO: text search - jsonRoot.childNodes[i].textContent
 (function(global) {
     //TODO: search box - fixed position?
-    //TODO: multiple instance jsonRoot;
+    //TODO: scroll?
+    //TODO: multiple instance test
+/*
     var jsonRoot = document.createElement('ul'),
         searchList = document.createElement('ul'),
         searchBox = document.createElement('input'),
-        instance = 0, _id = 0,
-        roots = [],
-        originalJson, originalTree,
+*/
+    var instance = 0, _id = 0,
+        instanceList = [],
+        originalJson,
         escapeMap = {
             '&': '&amp;',
             '<': '&lt;',
@@ -22,11 +24,14 @@
             });
         },
         jsonmander = function(rootEl, json, doSearch) {
-            roots.push(rootEl);
+            var jsonRoot = document.createElement('ul'),
+                searchList = document.createElement('ul'),
+                searchBox = document.createElement('input'),
+                originalTree, rows;
+            //roots.push(rootEl); do we need?
             depth = 0;
             originalJson = json;
-            var rows = describe(json);
-            rows = parseRows(rows);
+            rows = parseRows(describe(json));
 
             jsonRoot.className = '_jsonmander';
             jsonRoot.innerHTML = rows;
@@ -34,14 +39,15 @@
 
             searchList.className = '_jsonmander _jsonmander_search_list';
             searchList.innerHTML = '';
-            searchList.id = 'jsonmander_' + instance;
+            searchList.id = 'jsonmander_search_' + instance;
 
             searchBox.type = 'text';
             searchBox.className = '_jsonmander_box';
             searchBox.id = 'jsonmander_box_' + instance;
+            searchBox.placeholder = 'JSON notation or search word';
             searchBox.addEventListener('keyup', searchJSON);
 
-            originalTree = jsonRoot;
+            originalTree = jsonRoot.cloneNode(true);
             jsonRoot.addEventListener('click', toggleFold);
 
             if(doSearch) {
@@ -50,9 +56,15 @@
             rootEl.appendChild(jsonRoot);
             rootEl.appendChild(searchList);
 
-            clearSearch();
 
-            ++instance;
+            instanceList.push({
+                jsonRoot: jsonRoot,
+                searchList: searchList,
+                searchBox: searchBox,
+                originalTree: originalTree
+            });
+
+            clearSearch(instance++);
         },
         parseRows = function(rows) {
             var parsedRows = [];
@@ -103,7 +115,6 @@
                           '</span>';
             } else {
                 content = '<span class="_json_val ' + className + '">' +
-                              //pushRight(depth) + val +
                               val +
                           '</span>';
             }
@@ -188,8 +199,7 @@
                 nextLI = openLI.nextSibling,
                 closeBraceSpan = document.createElement('span'),
                 foldBtn = openLI.getElementsByTagName('a')[0],
-                instanceID = openLI.id.split('jsonmander_open_')[1].split('_')[0],
-                root = document.getElementById('jsonmander_' + instanceID);
+                instanceID = openLI.id.split('jsonmander_open_')[1].split('_')[0];
 
             bankEl.className = '_jsonmander_bank ' + closeID;
             while (true) {
@@ -199,7 +209,7 @@
                 bankEl.appendChild(oldLI);
                 if(oldLI.id === closeID) break;
             }
-            root.appendChild(bankEl);
+            instanceList[instanceID].jsonRoot.appendChild(bankEl);
 
             if(openLI.getElementsByClassName('_jsonmander_brace').length > 0) {
                 closeBraceSpan.className = '_jsonmander_brace';
@@ -218,12 +228,14 @@
         unfold = function(openLI) {
             var closeID = openLI.id.replace('open', 'close'),
                 nextLI = openLI.nextSibling,
-                bankEl = jsonRoot.getElementsByClassName('_jsonmander_bank ' + closeID)[0],
-                foldedLIs = bankEl.childNodes,
-                foldBtn = openLI.getElementsByTagName('a')[0];
+                foldBtn = openLI.getElementsByTagName('a')[0],
+                instanceID = openLI.id.split('jsonmander_open_')[1].split('_')[0],
+                root = instanceList[instanceID].jsonRoot,
+                bankEl = root.getElementsByClassName('_jsonmander_bank ' + closeID)[0],
+                foldedLIs = bankEl.childNodes;
 
             for(var i = 0, l = foldedLIs.length; i < l; ++i) {
-                jsonRoot.insertBefore(foldedLIs[0], nextLI);
+                root.insertBefore(foldedLIs[0], nextLI);
             }
 
             bankEl.remove();
@@ -237,25 +249,27 @@
             if(e.keyCode !== 13) {
                 return;
             }
-            var query = e.target.value.trim();
+            var query = e.target.value.trim(),
+                instanceID = parseInt(e.target.id.split('_')[2], 10);
+
             if(query[0] === '[' || query[0] === '.') {
-                browse(query);
+                browse(query, instanceID);
             } else if(query.length === 0) {
-                clearSearch();
+                clearSearch(instanceID);
             } else {
-                grep(query);
+                grep(query, instanceID);
             }
         },
-        clearSearch = function() {
-            jsonRoot.style.display = 'block';
-            searchList.innerHTML = '';
-            searchList.style.display = 'none';
-            searchBox.value = '';
+        clearSearch = function(i) {
+            instanceList[i].jsonRoot.style.display = 'block';
+            instanceList[i].searchList.innerHTML = '';
+            instanceList[i].searchList.style.display = 'none';
+            instanceList[i].searchBox.value = '';
         },
-        browse = function(objIdx) {
-            jsonRoot.style.display = 'none';
-            searchList.innerHTML = '';
-            searchList.style.display = 'block';
+        browse = function(objIdx, instanceID) {
+            instanceList[instanceID].jsonRoot.style.display = 'none';
+            instanceList[instanceID].searchList.innerHTML = '';
+            instanceList[instanceID].searchList.style.display = 'block';
 
             var idxs = objIdx.split(/[\[\.\]]+/),
                 newObj = originalJson;
@@ -275,36 +289,35 @@
                 var rows = describe(newObj);
                 rows = parseRows(rows);
 
-                searchList.innerHTML = rows;
+                instanceList[instanceID].searchList.innerHTML = rows;
             } catch(e) {
-                showNoResult();
+                showNoResult(instanceID);
             }
-
         },
-        grep = function(q) {
-            jsonRoot.style.display = 'none';
-            searchList.innerHTML = '';
-            searchList.style.display = 'block';
+        grep = function(q, instanceID) {
+            instanceList[instanceID].jsonRoot.style.display = 'none';
+            instanceList[instanceID].searchList.innerHTML = '';
+            instanceList[instanceID].searchList.style.display = 'block';
 
-            var originalList = originalTree.childNodes;
+            var originalList = instanceList[instanceID].originalTree.childNodes;
             for(var i = 0, l = originalList.length; i < l; ++i) {
                 if(originalList[i].textContent.indexOf(q) > -1) {
                     var foundLI = originalList[i].cloneNode(true);
                     for(var j = 0, len = foundLI.childNodes.length; j < len; ++j) {
                         foundLI.childNodes[j].innerHTML = foundLI.childNodes[j].innerHTML.replace(q, '<span class="_jsonmander_hilite">' + q + '</span>');
                     }
-                    searchList.appendChild(foundLI);
+                    instanceList[instanceID].searchList.appendChild(foundLI);
                 }
             }
 
-            if(searchList.childNodes.length === 0) {
-                showNoResult();
+            if(instanceList[instanceID].searchList.childNodes.length === 0) {
+                showNoResult(instanceID);
             }
         },
-        showNoResult = function() {
-            jsonRoot.style.display = 'none';
-            searchList.innerHTML = '<li class="_jsonmander_error">  NO RESULT TO SHOW</li>';
-            searchList.style.display = 'block';
+        showNoResult = function(i) {
+            instanceList[i].jsonRoot.style.display = 'none';
+            instanceList[i].searchList.innerHTML = '<li class="_jsonmander_error">  NO RESULT TO SHOW</li>';
+            instanceList[i].searchList.style.display = 'block';
         },
         depth;
 

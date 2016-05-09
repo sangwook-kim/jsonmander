@@ -7,6 +7,7 @@
 </head>
 <body>
     <div id="jsonmander"></div>
+    <div id="multipleinstance"></div>
     <script type="text/javascript" src="../src/jsonmander.js"></script>
     <script>
         var testJson = 
@@ -68,6 +69,7 @@
   }
 }
         jsonmander(document.getElementById('jsonmander'), testJson, true);
+        jsonmander(document.getElementById('multipleinstance'), testJson, true);
     </script>
 </body>
 </html>
