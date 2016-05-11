@@ -5,14 +5,12 @@ ul._jsonmander {
     font-size: 12pt;
     font-weight: 400;
     list-style: none;
+    color: #ffffff;
+    background-color: #112435;
 }
 
 ._jsonmander_row {
     white-space: pre-wrap;
-}
-
-._jsonmander_row:nth-child(odd) {
-    background-color: #eeeeee;
 }
 
 ._jsonmander_bank {
@@ -56,4 +54,18 @@ ul._jsonmander_search_list a {
 a._jsonmander_fold:link, a._jsonmander_fold:visited, a._jsonmander_fold:hover, a._jsonmander_fold:active, a._jsonmander_unfold:link, a._jsonmander_unfold:visited, a._jsonmander_unfold:hover, a._jsonmander_unfold:active {
     color: #c82829;
     text-decoration: none;
+    display: inline-block;
+    margin-left: 5px;
+    font-weight: 900;
+}
+
+._json_key, ._json_index {
+    color: #F08047;
+}
+
+._jsonmander_lineno {
+    display: inline-block;
+    width: 33px;
+    color: #999;
+    border-right: 2px solid #3E7087;
 }

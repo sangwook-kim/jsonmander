@@ -1,15 +1,8 @@
 (function(global) {
     //TODO: search box - fixed position?
-    //TODO: scroll?
-    //TODO: multiple instance test
-/*
-    var jsonRoot = document.createElement('ul'),
-        searchList = document.createElement('ul'),
-        searchBox = document.createElement('input'),
-*/
     var instance = 0, _id = 0,
         instanceList = [],
-        originalJson,
+        originalJson, lineno,
         escapeMap = {
             '&': '&amp;',
             '<': '&lt;',
@@ -30,6 +23,7 @@
                 originalTree, rows;
             //roots.push(rootEl); do we need?
             depth = 0;
+            lineno = 0;
             originalJson = json;
             rows = parseRows(describe(json));
 
@@ -73,9 +67,13 @@
                 if(rows[i] !== '') {
                     if(rows[i].split('data-block-id="').length > 1) {
                         var foldID = 'jsonmander_' + rows[i].split('data-block-id="')[1].split('"')[0];
-                        parsedRows.push('<li id="' + foldID + '" class="_jsonmander_row">' + rows[i] + '</li>');
+                        parsedRows.push('<li id="' + foldID + '" class="_jsonmander_row">' +
+                                        '<span class="_jsonmander_lineno">' + lineno++ +
+                                        '</span>' + rows[i] + '</li>');
                     } else {
-                        parsedRows.push('<li class="_jsonmander_row">' + rows[i] + '</li>');
+                        parsedRows.push('<li class="_jsonmander_row">' + 
+                                        '<span class="_jsonmander_lineno">' + lineno++ +
+                                        '</span>' + rows[i] + '</li>');
                     }
                 }
             }
@@ -109,7 +107,7 @@
             if(typeof index !== 'undefined') {
                 content = '<span class="_json_index">' +
                               pushRight(depth) + '[' + index + ']' +
-                          '</span>' +
+                          '</span>: ' +
                           '<span class="_json_val ' + className + '">' +
                               ' ' + val +
                           '</span>';
@@ -126,13 +124,13 @@
 
             var content = Object.keys(val).map(function(key) {
                               return '<span class="_json_key">' +
-                                     pushRight(depth) + '"' + escapeString(key) + '": ' +
-                                     '</span>' + describe(val[key]);
+                                     pushRight(depth) + '"' + escapeString(key) + '"' +
+                                     '</span>: ' + describe(val[key]);
                           }).join(''),
                 objectID = instance + '_' + _id++;
 
             if(typeof index !== 'undefined') {
-                content = '<span class="_json_index">' + '[' + index + ']' + '</span>' +
+                content = '<span class="_json_index">' + '[' + index + ']' + '</span>: ' +
                           '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '"> {</span>'  +
                           '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
                           content;
@@ -156,12 +154,12 @@
 
             for(var i = 0, l = val.length; i < l; ++i) {
                 content += '<span class="_json_index">' + 
-                           pushRight(depth) + '[' + i + ']: ' +
-                           '</span>' + describe(val[i]);
+                           pushRight(depth) + '[' + i + ']' +
+                           '</span>: ' + describe(val[i]);
             }
 
             if(typeof index !== 'undefined') {
-                content = '<span class="_json_index">' + '[' + index + ']' + '</span>' +
+                content = '<span class="_json_index">' + '[' + index + ']' + '</span>: ' +
                           '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '"> [</span>' +
                           '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
                           content;
@@ -180,7 +178,7 @@
             return content;
         },
         pushRight = function(depth) {
-            return Array((depth * 2) + 1).join(' ');
+            return Array((depth * 2) + 3).join(' ');
         },
         toggleFold = function(e) {
             if(e.target && e.target.nodeName === 'A') {
