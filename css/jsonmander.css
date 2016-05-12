@@ -59,7 +59,7 @@ ul._jsonmander {
 }
 
 ul._jsonmander_search_list a {
-    display: none;
+    display: none!important;
 }
 
 ._json_val._json_bool {

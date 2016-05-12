@@ -84,20 +84,25 @@
     },
     parseRows = function(rows) {
       var parsedRows = [],
-        linedepth;
+          linedepth;
       rows = rows.split('&');
       for(var i = 0, l = rows.length; i < l; i++) {
         if(rows[i] !== '') {
-          linedepth = rows[i].split('data-depth="')[1].split('"')[0];
+          if(rows[i].indexOf('data-depth="') > 0) {
+            linedepth = rows[i].split('data-depth="')[1].split('"')[0];
+          } else {
+            linedepth = 0;
+          }
+
           if(parseInt(linedepth, 10) > 5) linedepth = '5';
           if(rows[i].split('data-block-id="').length > 1) {
             var foldID = 'jsonmander_' + rows[i].split('data-block-id="')[1].split('"')[0];
             parsedRows.push('<li id="' + foldID + '" class="_jsonmander_row _jsonmander_depth' + linedepth + '">' +
-                    '<span class="_jsonmander_lineno">' + lineno++ +
+                    '<span class="_jsonmander_lineno">' + ++lineno +
                     '</span>' + rows[i] + '</li>');
           } else {
             parsedRows.push('<li class="_jsonmander_row _jsonmander_depth' + linedepth + '">' + 
-                    '<span class="_jsonmander_lineno">' + lineno++ +
+                    '<span class="_jsonmander_lineno">' + ++lineno +
                     '</span>' + rows[i] + '</li>');
           }
         }
@@ -132,7 +137,7 @@
       if(typeof index !== 'undefined') {
         content = '<span class="_json_index">' +
                 pushRight(depth) + '[' + index + ']' +
-              '</span>: ' +
+              '</span><span class="_jsonmander_colon">: </span>' +
               '<span class="_json_val ' + className + '">' +
                 ' ' + val +
               '</span>';
@@ -149,20 +154,26 @@
       var content = Object.keys(val).map(function(key) {
                 return '<span class="_json_key" data-depth="' + depth + '">' +
                    pushRight(depth) + '"' + escapeString(key) + '"' +
-                   '</span>: ' + describe(val[key]);
+                   '</span><span class="_jsonmander_colon">: </span>' + describe(val[key]);
               }).join(''),
         objectID = instance + '_' + _id++;
       depth--;
 
       if(typeof index !== 'undefined') {
-        content = '<span class="_json_index" data-depth="' + depth + '">' + '[' + index + ']' + '</span>: ' +
+        content = '<span class="_json_index" data-depth="' + depth + '">' + '[' + index + ']' + '</span><span class="_jsonmander_colon">: </span>' +
               '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '"> {</span>'  +
               '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
               content;
       } else {
-        content = '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '" data-depth="' + depth + '">'  +
-              '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
-              content;
+        if(depth === 0) {
+          content = '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '" data-depth="' + depth + '">'  +
+                    pushRight(depth) + '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    content;
+        } else {
+          content = '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '" data-depth="' + depth + '">'  +
+                    '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    content;
+        }
       }
 
 
@@ -179,19 +190,25 @@
       for(var i = 0, l = val.length; i < l; ++i) {
         content += '<span class="_json_index" data-depth="' + depth + '">' + 
                pushRight(depth) + '[' + i + ']' +
-               '</span>: ' + describe(val[i]);
+               '</span><span class="_jsonmander_colon">: </span>' + describe(val[i]);
       }
       depth--;
 
       if(typeof index !== 'undefined') {
-        content = '<span class="_json_index" data-depth="' + depth + '">' + '[' + index + ']' + '</span>: ' +
+        content = '<span class="_json_index" data-depth="' + depth + '">' + '[' + index + ']' + '</span><span class="_jsonmander_colon">: </span>' +
               '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '"> [</span>' +
               '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
               content;
       } else {
-        content = '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '" data-depth="' + depth + '">' +
-              '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
-              content;
+        if(depth === 0) {
+          content = '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '" data-depth="' + depth + '">' +
+                    pushRight(depth) + '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    content;
+        } else {
+          content = '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '" data-depth="' + depth + '">' +
+                    '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    content;
+        }
       }
 
 
@@ -307,6 +324,9 @@
             }
           }
         }
+
+        depth = 0;
+        lineno = 0;
 
         var rows = describe(newObj);
         rows = parseRows(rows);
