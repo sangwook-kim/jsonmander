@@ -6,11 +6,38 @@ ul._jsonmander {
     font-weight: 400;
     list-style: none;
     color: #ffffff;
-    background-color: #112435;
+    background-color: #000000;
 }
 
 ._jsonmander_row {
     white-space: pre-wrap;
+    /*background-color: rgba(43,87,125,1);*/
+    background-color: rgba(66,91,113,1);;
+}
+
+._jsonmander_depth1 {
+    /*background-color: rgba(43,87,125,0.8);*/
+    background-color: rgba(66,91,113,0.8);;
+}
+
+._jsonmander_depth2 {
+    /*background-color: rgba(43,87,125,0.6);*/
+    background-color: rgba(66,91,113,0.6);;
+}
+
+._jsonmander_depth3 {
+    /*background-color: rgba(43,87,125,0.4);*/
+    background-color: rgba(66,91,113,0.4);;
+}
+
+._jsonmander_depth4 {
+    /*background-color: rgba(43,87,125,0.2);*/
+    background-color: rgba(66,91,113,0.2);;
+}
+
+._jsonmander_depth5 {
+    /*background-color: rgba(43,87,125,0);*/
+    background-color: rgba(66,91,113,0);;
 }
 
 ._jsonmander_bank {
@@ -56,6 +83,7 @@ a._jsonmander_fold:link, a._jsonmander_fold:visited, a._jsonmander_fold:hover, a
     text-decoration: none;
     display: inline-block;
     margin-left: 5px;
+    margin-right: 5px;
     font-weight: 900;
 }
 

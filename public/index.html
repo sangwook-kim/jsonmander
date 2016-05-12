@@ -68,8 +68,8 @@
     ]
   }
 }
-        jsonmander(document.getElementById('jsonmander'), testJson, true);
-        jsonmander(document.getElementById('multipleinstance'), testJson, true);
+        jsonmander(document.getElementById('jsonmander'), testJson, {doSearch: true, defaultFoldDepth: 2});
+        jsonmander(document.getElementById('multipleinstance'), testJson);
     </script>
 </body>
 </html>
