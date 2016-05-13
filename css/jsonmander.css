@@ -45,9 +45,21 @@ ul._jsonmander {
 }
 
 ._jsonmander_box {
-    float: right;
+    width: 230px;
+    border-radius: 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    padding-left: 10px;
+    border: 1px solid #adc5cf;
 }
 
+._jsonmander_box input {
+    outline: none;
+    width: 180px;
+    border: none;
+    margin: 0 8px;
+    line-height: 2em;
+}
 ._jsonmander_hilite {
     background-color: #FFFF00;
     font-weight: 900;

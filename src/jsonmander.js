@@ -11,6 +11,7 @@
       '\'': '&#x27;',
       '/': '&#x2F;'
     },
+    initialized = false,
     escapeString = function(str) {
       return str.replace(/[&<>'"]/g, function(c) {
         return escapeMap[c];
@@ -20,6 +21,7 @@
       var jsonRoot = document.createElement('ul'),
         searchList = document.createElement('ul'),
         searchBox = document.createElement('input'),
+        searchWrap = document.createElement('div'),
         options = {doSearch: true, defaultFoldDepth: 0}, 
         originalTree, rows;
     
@@ -29,6 +31,16 @@
               options[op] = opt[op];
             }
         }
+      }
+
+      if(!initialized) {
+        var styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.type = 'text/css';
+        styleTag.href = 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css';
+
+        document.getElementsByTagName('head')[0].appendChild(styleTag);
+        initialized = true;
       }
 
       depth = 0;
@@ -45,16 +57,20 @@
       searchList.id = 'jsonmander_search_' + instance;
 
       searchBox.type = 'text';
-      searchBox.className = '_jsonmander_box';
+      //searchBox.className = '_jsonmander_box';
       searchBox.id = 'jsonmander_box_' + instance;
-      searchBox.placeholder = 'JSON notation or search word';
+      searchBox.placeholder = 'Search or Browse';
       searchBox.addEventListener('keyup', searchJSON);
+
+      searchWrap.innerHTML = '<i class="fa fa-search"></i>';
+      searchWrap.className = '_jsonmander_box';
+      searchWrap.appendChild(searchBox);
 
       originalTree = jsonRoot.cloneNode(true);
       jsonRoot.addEventListener('click', toggleFold);
 
       if(options.doSearch) {
-        rootEl.appendChild(searchBox);
+        rootEl.appendChild(searchWrap);
       }
       rootEl.appendChild(jsonRoot);
       rootEl.appendChild(searchList);
@@ -98,11 +114,11 @@
           if(rows[i].split('data-block-id="').length > 1) {
             var foldID = 'jsonmander_' + rows[i].split('data-block-id="')[1].split('"')[0];
             parsedRows.push('<li id="' + foldID + '" class="_jsonmander_row _jsonmander_depth' + linedepth + '">' +
-                    '<span class="_jsonmander_lineno">' + ++lineno +
+                    '<span class="_jsonmander_lineno">' + (++lineno) +
                     '</span>' + rows[i] + '</li>');
           } else {
             parsedRows.push('<li class="_jsonmander_row _jsonmander_depth' + linedepth + '">' + 
-                    '<span class="_jsonmander_lineno">' + ++lineno +
+                    '<span class="_jsonmander_lineno">' + (++lineno) +
                     '</span>' + rows[i] + '</li>');
           }
         }
