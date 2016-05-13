@@ -1,4 +1,4 @@
-(function(global) {
+;(function(global) {
   //TODO: search box - fixed position?
   var instance = 0, _id = 0,
     instanceList = [],
