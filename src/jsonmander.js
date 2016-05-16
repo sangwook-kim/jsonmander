@@ -22,9 +22,10 @@
         searchList = document.createElement('ul'),
         searchBox = document.createElement('input'),
         searchWrap = document.createElement('div'),
-        options = {doSearch: true, defaultFoldDepth: 0}, 
+        options = {doSearch: true, defaultFoldDepth: 0, showLineNo: true},
         originalTree, rows;
     
+
       if(typeof opt !== 'undefined') {
         for(var op in opt) {
             if(opt.hasOwnProperty(op)) {
@@ -46,7 +47,7 @@
       depth = 0;
       lineno = 0;
       originalJson = json;
-      rows = parseRows(describe(json));
+      rows = parseRows(describe(json), options.showLineNo);
 
       jsonRoot.className = '_jsonmander';
       jsonRoot.innerHTML = rows;
@@ -80,7 +81,8 @@
         jsonRoot: jsonRoot,
         searchList: searchList,
         searchBox: searchBox,
-        originalTree: originalTree
+        originalTree: originalTree,
+        options: options
       });
 
       clearSearch(instance++);
@@ -98,9 +100,10 @@
         }
       }
     },
-    parseRows = function(rows) {
+    parseRows = function(rows, showLineNo) {
       var parsedRows = [],
-          linedepth;
+          linedepth, liStr;
+
       rows = rows.split('&');
       for(var i = 0, l = rows.length; i < l; i++) {
         if(rows[i] !== '') {
@@ -113,13 +116,21 @@
           if(parseInt(linedepth, 10) > 5) linedepth = '5';
           if(rows[i].split('data-block-id="').length > 1) {
             var foldID = 'jsonmander_' + rows[i].split('data-block-id="')[1].split('"')[0];
-            parsedRows.push('<li id="' + foldID + '" class="_jsonmander_row _jsonmander_depth' + linedepth + '">' +
-                    '<span class="_jsonmander_lineno">' + (++lineno) +
-                    '</span>' + rows[i] + '</li>');
+            liStr = '<li id="' + foldID + '" class="_jsonmander_row _jsonmander_depth' + linedepth + '">';
+            if(showLineNo) {
+              liStr += '<span class="_jsonmander_lineno">' + (++lineno) + '</span>';
+            }
+            liStr += rows[i] + '</li>';
+
+            parsedRows.push(liStr);
           } else {
-            parsedRows.push('<li class="_jsonmander_row _jsonmander_depth' + linedepth + '">' + 
-                    '<span class="_jsonmander_lineno">' + (++lineno) +
-                    '</span>' + rows[i] + '</li>');
+            liStr = '<li class="_jsonmander_row _jsonmander_depth' + linedepth + '">';
+            if(showLineNo) {
+              liStr += '<span class="_jsonmander_lineno">' + (++lineno) + '</span>';
+            }
+            liStr += rows[i] + '</li>';
+
+            parsedRows.push(liStr);
           }
         }
       }
@@ -345,7 +356,7 @@
         lineno = 0;
 
         var rows = describe(newObj);
-        rows = parseRows(rows);
+        rows = parseRows(rows, instanceList[instanceID].options.showLineNo);
 
         instanceList[instanceID].searchList.innerHTML = rows;
       } catch(e) {
