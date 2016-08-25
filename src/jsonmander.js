@@ -21,6 +21,7 @@
       var jsonRoot = document.createElement('ul'),
         searchList = document.createElement('ul'),
         searchBox = document.createElement('input'),
+        titleWrap = document.createElement('div'),
         searchWrap = document.createElement('div'),
         options = {doSearch: true, defaultFoldDepth: 0, showLineNo: true},
         originalTree, rows;
@@ -67,12 +68,19 @@
       searchWrap.className = '_jsonmander_box';
       searchWrap.appendChild(searchBox);
 
+      titleWrap.innerHTML = ['<div class="jsonmander_title">',
+                                '<span>Current Value</span>',
+                                '<a href="#" class="fa fa-refresh"></a>',
+                             '</div>'].join('');
+      titleWrap.className = 'srch_jsonmander';
+
       originalTree = jsonRoot.cloneNode(true);
       jsonRoot.addEventListener('click', toggleFold);
 
       if(options.doSearch) {
-        rootEl.appendChild(searchWrap);
+        titleWrap.appendChild(searchWrap);
       }
+      rootEl.appendChild(titleWrap);
       rootEl.appendChild(jsonRoot);
       rootEl.appendChild(searchList);
 
