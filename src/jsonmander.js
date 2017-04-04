@@ -21,6 +21,7 @@
       var jsonRoot = document.createElement('ul'),
         searchList = document.createElement('ul'),
         searchBox = document.createElement('input'),
+        titleWrap = document.createElement('div'),
         searchWrap = document.createElement('div'),
         options = {doSearch: true, defaultFoldDepth: 0, showLineNo: true},
         originalTree, rows;
@@ -67,12 +68,19 @@
       searchWrap.className = '_jsonmander_box';
       searchWrap.appendChild(searchBox);
 
+      titleWrap.innerHTML = ['<div class="jsonmander_title">',
+                                '<span>Current Value</span>',
+                                '<a href="#" class="fa fa-refresh"></a>',
+                             '</div>'].join('');
+      titleWrap.className = 'srch_jsonmander';
+
       originalTree = jsonRoot.cloneNode(true);
       jsonRoot.addEventListener('click', toggleFold);
 
       if(options.doSearch) {
-        rootEl.appendChild(searchWrap);
+        titleWrap.appendChild(searchWrap);
       }
+      rootEl.appendChild(titleWrap);
       rootEl.appendChild(jsonRoot);
       rootEl.appendChild(searchList);
 
@@ -104,7 +112,7 @@
       var parsedRows = [],
           linedepth, liStr;
 
-      rows = rows.split('&');
+      rows = rows.split('{{br}}');
       for(var i = 0, l = rows.length; i < l; i++) {
         if(rows[i] !== '') {
           if(rows[i].indexOf('data-depth="') > 0) {
@@ -174,7 +182,7 @@
               '</span>';
       }
 
-      return content + '&';
+      return content + '{{br}}';
     },
     describeObject = function(val, index) {
       depth++;
@@ -189,16 +197,16 @@
       if(typeof index !== 'undefined') {
         content = '<span class="_json_index" data-depth="' + depth + '">' + '[' + index + ']' + '</span><span class="_jsonmander_colon">: </span>' +
               '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '"> {</span>'  +
-              '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+              '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>{{br}}' +
               content;
       } else {
         if(depth === 0) {
           content = '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '" data-depth="' + depth + '">'  +
-                    pushRight(depth) + '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    pushRight(depth) + '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>{{br}}' +
                     content;
         } else {
           content = '<span class="_jsonmander_brace" data-block-id="open_' + objectID + '" data-depth="' + depth + '">'  +
-                    '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    '{</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>{{br}}' +
                     content;
         }
       }
@@ -206,7 +214,7 @@
 
       content = content + 
             '<span class="_jsonmander_brace" data-block-id="close_' + objectID + '" data-depth="' + depth + '">'  +
-            pushRight(depth) + '}</span>&';
+            pushRight(depth) + '}</span>{{br}}';
 
       return content;
     },
@@ -224,16 +232,16 @@
       if(typeof index !== 'undefined') {
         content = '<span class="_json_index" data-depth="' + depth + '">' + '[' + index + ']' + '</span><span class="_jsonmander_colon">: </span>' +
               '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '"> [</span>' +
-              '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+              '<span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>{{br}}' +
               content;
       } else {
         if(depth === 0) {
           content = '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '" data-depth="' + depth + '">' +
-                    pushRight(depth) + '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    pushRight(depth) + '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>{{br}}' +
                     content;
         } else {
           content = '<span class="_jsonmander_bracket" data-block-id="open_' + arrayID + '" data-depth="' + depth + '">' +
-                    '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>&' +
+                    '[</span><span class="_jsonmander_fold"><a href="#" class="_jsonmander_fold">-</a></span>{{br}}' +
                     content;
         }
       }
@@ -241,7 +249,7 @@
 
       content = content + 
             '<span class="_jsonmander_bracket" data-block-id="close_' + arrayID + '" data-depth="' + depth + '">'  +
-            pushRight(depth) + ']</span>&';
+            pushRight(depth) + ']</span>{{br}}';
 
       return content;
     },
